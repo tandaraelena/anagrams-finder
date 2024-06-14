@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { fetchURL, sanitiseWordsList } from "./utils";
+import { fetchURL } from "./utils";
 
 const Main = () => {
   const [data, setData] = useState<Record<string, Array<string>>>({});
+  const [rawData, setRawData] = useState<string[]>();
+  const [inputValue, setInputValue] = useState<string>("");
 
   // fetch data
   useEffect(() => {
@@ -13,11 +15,7 @@ const Main = () => {
           .then((response) => {
             return response.split("\n").map((word) => word.trim());
           });
-        const newWordsListStructure: Record<
-          string,
-          Array<string>
-        > = sanitiseWordsList(response);
-        setData(newWordsListStructure);
+        setRawData(response);
       } catch (error) {
         console.log((error as { message: string }).message);
       }
@@ -25,9 +23,30 @@ const Main = () => {
     getData();
   }, []);
 
+  useEffect(() => {
+    if (rawData && rawData?.length > 0) {
+      const worker = new Worker(new URL("./worker.ts", import.meta.url));
+
+      worker.onmessage = (event) => {
+        setData(event.data);
+      };
+
+      worker.postMessage(rawData);
+
+      return () => {
+        worker.terminate();
+      };
+    }
+  }, [rawData]);
+
   console.log("data", JSON.stringify(data));
 
-  return <div>hey</div>;
+  return (
+    <div>
+      <h1>Anagrams finder</h1>
+      <input value={inputValue} />
+    </div>
+  );
 };
 
 export default Main;
