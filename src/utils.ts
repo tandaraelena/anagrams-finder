@@ -1,11 +1,6 @@
 export const fetchURL = "https://raw.githubusercontent.com/dwyl/english-words/master/words.txt";
 
-export const sortWord = (word: string) =>
-  word
-    .replace(/[^A-Za-z0-9]/g, "")
-    .toLowerCase()
-    .split("")
-    .join("");
+export const sortWord = (word: string): string => word.replace(/[^A-Za-z0-9]/g,"").toLowerCase().split('').sort().join('');
 
 export const sanitiseWordsList = (words: string[]) => {
   const newWordsStructure: Record<string, Array<string>> = {};
@@ -15,7 +10,7 @@ export const sanitiseWordsList = (words: string[]) => {
     if (!Object.hasOwn(newWordsStructure, cleanWord)) {
       newWordsStructure[cleanWord] = [];
     }
-    newWordsStructure[cleanWord].push(cleanWord);
+    newWordsStructure[cleanWord].push(word);
   });
   
   return newWordsStructure;

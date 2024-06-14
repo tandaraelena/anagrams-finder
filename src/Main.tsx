@@ -25,7 +25,7 @@ const Main = () => {
     getData();
   }, []);
 
-  console.log("data", data);
+  console.log("data", JSON.stringify(data));
 
   return <div>hey</div>;
 };
