@@ -7,7 +7,7 @@ const Main = () => {
   const [inputValue, setInputValue] = useState<string>("");
   const [anagrams, setAnagrams] = useState<string[]>([]);
 
-  // fetch data
+  // fetch text file and transform it in an array of words
   useEffect(() => {
     const getData = async () => {
       try {
@@ -24,6 +24,7 @@ const Main = () => {
     getData();
   }, []);
 
+  // setup web worker to transform the data in a hashmap - better for words search
   useEffect(() => {
     if (rawData && rawData?.length > 0) {
       const worker = new Worker(new URL("./worker.ts", import.meta.url));
@@ -40,6 +41,7 @@ const Main = () => {
     }
   }, [rawData]);
 
+  // use debounce function to wait 1s after user wrote the word
   const debouncedAnagramsLookup = useCallback(
     (val: string) => {
       debounce(() => {
@@ -53,6 +55,8 @@ const Main = () => {
   );
 
   // handle change event
+  // change the input value
+  // fire debounce function to check if a word has anagrams
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
     debouncedAnagramsLookup(event.target.value);
@@ -61,7 +65,7 @@ const Main = () => {
   return (
     <div>
       <h1>Anagrams finder</h1>
-      <label htmlFor="input-field">Check anagram</label>
+      <label htmlFor="input-field">Check anagram: </label>
       <input value={inputValue} onChange={handleChange} />
       <div>
         {inputValue.length > 0 && anagrams.length > 0 ? (
