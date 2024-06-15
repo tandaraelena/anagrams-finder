@@ -1,9 +1,7 @@
 import { useEffect, useCallback, useState, ChangeEvent } from "react";
-import { fetchURL } from "./util/constants";
-import { debounce } from "./util/debounce";
-import { sortWord } from "./util/sort-word";
+import { fetchURL, debounce, sortWord } from "../../util";
 
-export const WorkerSolution = () => {
+export const WebWorker = () => {
   const [data, setData] = useState<Record<string, Array<string>>>({});
   const [rawData, setRawData] = useState<string[]>();
   const [inputValue, setInputValue] = useState<string>("");
@@ -48,7 +46,7 @@ export const WorkerSolution = () => {
         if (data[cleanWord]) {
           setAnagrams(data[cleanWord]);
         }
-      }, 1000);
+      }, 600);
     },
     [data]
   );
@@ -65,17 +63,13 @@ export const WorkerSolution = () => {
     <div>
       <h2>Worker solution: </h2>
       <label htmlFor="input-field">Check anagram: </label>
-      <input value={inputValue} onChange={handleChange} />
+      <input value={inputValue} onChange={handleChange} id="input-field" />
       <div>
-        {inputValue.length > 0 && anagrams.length > 0 ? (
-          <div>
-            {anagrams.map((a, i) => (
-              <p key={i}>{a}</p>
-            ))}
-          </div>
-        ) : inputValue.length > 0 && anagrams.length === 0 ? (
-          <p>No anagrams found</p>
-        ) : null}
+        {inputValue.length > 0 && anagrams.length > 0
+          ? anagrams.join(", ")
+          : inputValue.length > 0 && anagrams.length === 0
+          ? "No anagrams found"
+          : null}
       </div>
     </div>
   );

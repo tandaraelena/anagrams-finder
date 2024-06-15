@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
-import { getAnagram } from "./util/get-anagram";
+import { getAnagram } from "../../util/get-anagram";
 
-export const MainOptimised = () => {
+export const JsonFiles = () => {
   const [inputValue, setInputValue] = useState("");
   const [anagrams, setAnagrams] = useState([]);
 
@@ -11,11 +11,11 @@ export const MainOptimised = () => {
       setAnagrams(result);
     } catch (error: any) {
       setAnagrams([]);
-      console.log(error.message);
-      console.log(error.code);
+      // console.log(error.message);
     }
   };
 
+  // handles input changes
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
     checkAnagrams(event.target.value);
@@ -24,9 +24,15 @@ export const MainOptimised = () => {
   return (
     <div>
       <h2>Json files solution: </h2>
-      <label htmlFor="input-fiel">Check anagram: </label>
-      <input value={inputValue} onChange={handleChange} id="input-fiel" />
-      <div>{anagrams.join(", ")}</div>
+      <label htmlFor="input">Check anagram: </label>
+      <input value={inputValue} onChange={handleChange} id="input" />
+      <div>
+        {anagrams.length > 0
+          ? anagrams.join(", ")
+          : inputValue.length === 0
+          ? ""
+          : "No anagrams found"}
+      </div>
     </div>
   );
 };
