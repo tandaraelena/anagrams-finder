@@ -15,3 +15,10 @@ export const sanitiseWordsList = (words: string[]) => {
   
   return newWordsStructure;
 };
+
+export const debounce = (callbackFn: (val:string) => void, delay: number) => {
+  const timer = setTimeout(callbackFn,delay);
+  
+  // cleanup timer
+  return () => clearTimeout(timer);
+}

@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
-import { fetchURL } from "./utils";
+import { useEffect, useCallback, useState, ChangeEvent } from "react";
+import { fetchURL, debounce, sortWord } from "./utils";
 
 const Main = () => {
   const [data, setData] = useState<Record<string, Array<string>>>({});
   const [rawData, setRawData] = useState<string[]>();
   const [inputValue, setInputValue] = useState<string>("");
+  const [anagrams, setAnagrams] = useState<string[]>([]);
 
   // fetch data
   useEffect(() => {
@@ -39,12 +40,40 @@ const Main = () => {
     }
   }, [rawData]);
 
-  console.log("data", JSON.stringify(data));
+  const debouncedAnagramsLookup = useCallback(
+    (val: string) => {
+      debounce(() => {
+        const cleanWord = sortWord(val);
+        if (data[cleanWord]) {
+          setAnagrams(data[cleanWord]);
+        }
+      }, 1000);
+    },
+    [data]
+  );
+
+  // handle change event
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+    debouncedAnagramsLookup(event.target.value);
+  };
 
   return (
     <div>
       <h1>Anagrams finder</h1>
-      <input value={inputValue} />
+      <label htmlFor="input-field">Check anagram</label>
+      <input value={inputValue} onChange={handleChange} />
+      <div>
+        {inputValue.length > 0 && anagrams.length > 0 ? (
+          <div>
+            {anagrams.map((a, i) => (
+              <p key={i}>{a}</p>
+            ))}
+          </div>
+        ) : inputValue.length > 0 && anagrams.length === 0 ? (
+          <p>No anagrams found</p>
+        ) : null}
+      </div>
     </div>
   );
 };
